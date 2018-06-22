@@ -16,13 +16,17 @@ def get_last_commit(ext):
 
 
 def format(f):
-    ff = os.path.splitext(f.lower())
-    if ff == '.py':
+    if f.endswith('.py'):
+        print('Formatting {}'.format(f))
         os.system('black {}'.format(f))
-    elif ff == '.java':
+    elif f.endswith('.java'):
+        print('Formatting {}'.format(f))
         os.system('java --jar /tools/google-java-format-1.6-all-deps.jar --replace {}'.format(f))
-    elif ff == '.go':
+    elif f.endswith('.go'):
+        print('Formatting {}'.format(f))
         os.system('gofmt -w {}'.format(f))
+    else:
+        print('Unsupported file {}'.format(f))
 
 
 def has_ugly():
@@ -37,9 +41,11 @@ def has_ugly():
     
 
 if __name__ == '__main__':
-    os.chdir(sys.argv[2])
-    for f in get_last_commit(sys.argv[1]).split(b'\n'):
-        format(f)
+    fs = get_last_commit(sys.argv[1])
+    print('Files changed in last commit:')
+    print(fs)
+    for f in fs.split(b'\n')[:-1]:
+        format(f.strip().decode())  # for some reason, fs is b''
     if has_ugly():
         sys.exit(1)
     else:
