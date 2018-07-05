@@ -5,9 +5,9 @@ import os
 import sys
 
 
-def get_last_commit(ext):
+def get_last_commit():
     git = subprocess.Popen('git show --name-only --oneline HEAD'.split(), stdout=subprocess.PIPE)
-    grep = subprocess.Popen(['grep', '-i', '%s$' % ext], stdin=git.stdout, stdout=subprocess.PIPE)
+    grep = subprocess.Popen(['tee'], stdin=git.stdout, stdout=subprocess.PIPE)
     git.stdout.close()
     output, err = grep.communicate()
     if err:
@@ -21,7 +21,7 @@ def format(f):
         os.system('black {}'.format(f))
     elif f.endswith('.java'):
         print('Formatting {}'.format(f))
-        os.system('java --jar /tools/google-java-format-1.6-all-deps.jar --replace {}'.format(f))
+        os.system('java -jar /tools/google-java-format-1.6-all-deps.jar --replace {}'.format(f))
     elif f.endswith('.go'):
         print('Formatting {}'.format(f))
         os.system('gofmt -w {}'.format(f))
@@ -41,7 +41,7 @@ def has_ugly():
     
 
 if __name__ == '__main__':
-    fs = get_last_commit(sys.argv[1])
+    fs = get_last_commit()
     print('Files changed in last commit:')
     print(fs)
     for f in fs.split(b'\n')[:-1]:
