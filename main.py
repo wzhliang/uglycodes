@@ -6,10 +6,10 @@ import sys
 
 
 def get_last_commit():
-    git = subprocess.Popen('git show --name-only --oneline HEAD'.split(), stdout=subprocess.PIPE)
-    grep = subprocess.Popen(['tee'], stdin=git.stdout, stdout=subprocess.PIPE)
+    git = subprocess.Popen('git --no-pager show --name-only --oneline HEAD'.split(), stdout=subprocess.PIPE)
+    sed = subprocess.Popen(['sed', '1d'], stdin=git.stdout, stdout=subprocess.PIPE)
     git.stdout.close()
-    output, err = grep.communicate()
+    output, err = sed.communicate()
     if err:
         raise ValueError
     return output
