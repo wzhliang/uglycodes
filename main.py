@@ -58,15 +58,26 @@ def save_diff(fn):
     return len(output) != 0
 
 
+def is_unix(fn):
+    git = subprocess.Popen(["dos2unix", "-i", fn], stdout=subprocess.PIPE)
+    output, err = git.communicate()
+    if err:
+        raise ValueError
+    print(output)
+    n = int(output.split()[0])  # allow raising exception
+    return (n == 0)
+
+
 if __name__ == "__main__":
     fs = get_last_commit()
     print("Files changed in last commit:")
     print(fs)
     for f in fs.split(b"\n")[:-1]:
+        if not is_unix(f):
+            sys.exit(2)
         format(f.strip().decode())  # for some reason, fs is b''
     if has_ugly():
         if len(sys.argv) > 1:
             save_diff(os.path.abspath(sys.argv[1]))
         sys.exit(1)
-    else:
-        sys.exit(0)
+    sys.exit(0)
