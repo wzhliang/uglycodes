@@ -73,6 +73,8 @@ if __name__ == "__main__":
     print("Files changed in last commit:")
     print(fs)
     for f in fs.split(b"\n")[:-1]:
+        if not f:  # FIXME: for merge result, file list is empty
+            continue
         if not is_unix(f):
             sys.exit(2)
         format(f.strip().decode())  # for some reason, fs is b''
