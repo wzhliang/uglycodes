@@ -25,7 +25,7 @@ def format(f):
     elif f.endswith(".java"):
         print("Formatting {}".format(f))
         os.system(
-            "java -jar /tools/google-java-format-1.6-all-deps.jar --replace {}".format(
+            "java -jar /tools/google-java-format-1.6-all-deps.jar --skip-sorting-imports --replace {}".format(
                 f
             )
         )
