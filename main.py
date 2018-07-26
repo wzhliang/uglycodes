@@ -6,16 +6,16 @@ import os.path
 import sys
 
 
-def get_last_commit():
+def get_last_n_commit(n):
     git = subprocess.Popen(
-        "git --no-pager show --name-only --oneline HEAD".split(), stdout=subprocess.PIPE
+        "git --no-pager diff --name-status -r HEAD~{}".format(n).split(), stdout=subprocess.PIPE
     )
-    sed = subprocess.Popen(["sed", "1d"], stdin=git.stdout, stdout=subprocess.PIPE)
+    sed = subprocess.Popen(["sed", "/^D/d"], stdin=git.stdout, stdout=subprocess.PIPE)
     git.stdout.close()
     output, err = sed.communicate()
     if err:
         raise ValueError
-    return output
+    return [x.split("\t")[1] for x in output.strip().split("\n")]
 
 
 def format(f):
@@ -68,14 +68,14 @@ def is_unix(fn):
     return (n == 0)
 
 
-if __name__ == "__main__":
-    fs = get_last_commit()
-    print("Files changed in last commit:")
-    print(fs)
-    for f in fs.split(b"\n")[:-1]:
+def main():
+    fs = get_last_n_commit(sys.argv[2])
+    for f in fs:
+        print(f)
         if not f:  # FIXME: for merge result, file list is empty
             continue
         if not is_unix(f):
+            print("XXX DOS line ending: {}".format(f))
             sys.exit(2)
         format(f.strip().decode())  # for some reason, fs is b''
     if has_ugly():
@@ -83,3 +83,6 @@ if __name__ == "__main__":
             save_diff(os.path.abspath(sys.argv[1]))
         sys.exit(1)
     sys.exit(0)
+
+if __name__ == "__main__":
+    main()
