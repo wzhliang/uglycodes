@@ -16,7 +16,7 @@ def get_last_n_commit(n):
     output, err = sed.communicate()
     if err:
         raise ValueError
-    return [x.split("\t")[1] for x in output.strip().split("\n")]
+    return [x.split(b"\t")[1] for x in output.strip().split(b"\n")]
 
 
 def format(f):
