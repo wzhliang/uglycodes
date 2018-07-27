@@ -8,7 +8,8 @@ import sys
 
 def get_last_n_commit(n):
     git = subprocess.Popen(
-        "git --no-pager diff --name-status -r HEAD~{}".format(n).split(), stdout=subprocess.PIPE
+        "git --no-pager diff --name-status -r HEAD~{}".format(n).split(),
+        stdout=subprocess.PIPE,
     )
     sed = subprocess.Popen(["sed", "/^D/d"], stdin=git.stdout, stdout=subprocess.PIPE)
     git.stdout.close()
@@ -65,7 +66,7 @@ def is_unix(fn):
         raise ValueError
     print(output)
     n = int(output.split()[0])  # allow raising exception
-    return (n == 0)
+    return n == 0
 
 
 def main():
@@ -83,6 +84,7 @@ def main():
             save_diff(os.path.abspath(sys.argv[1]))
         sys.exit(1)
     sys.exit(0)
+
 
 if __name__ == "__main__":
     main()
