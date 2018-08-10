@@ -69,11 +69,15 @@ def is_unix(fn):
     return n == 0
 
 
+def should_ignore(fn):
+    return fn.startswith('vendor/')
+
+
 def main():
     fs = get_last_n_commit(sys.argv[2])
     for f in fs:
         print(f)
-        if not f:  # FIXME: for merge result, file list is empty
+        if not f or should_ignore(f):  # FIXME: for merge result, file list is empty
             continue
         if not is_unix(f):
             print("XXX DOS line ending: {}".format(f))
