@@ -70,7 +70,7 @@ def is_unix(fn):
 
 
 def should_ignore(fn):
-    return fn.startswith('vendor/')
+    return fn.startswith(b"vendor/")
 
 
 def main():
