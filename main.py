@@ -11,7 +11,7 @@ def get_last_n_commit(n):
         "git --no-pager diff --name-status -r HEAD~{}".format(n).split(),
         stdout=subprocess.PIPE,
     )
-    sed = subprocess.Popen(["sed", "/^D/d"], stdin=git.stdout, stdout=subprocess.PIPE)
+    sed = subprocess.Popen(["sed", "/^[RD]/d"], stdin=git.stdout, stdout=subprocess.PIPE)
     git.stdout.close()
     output, err = sed.communicate()
     if err:
